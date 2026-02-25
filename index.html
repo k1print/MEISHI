@@ -3,15 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <title>画像サイズ固定 PDF変換ツール</title>
-    <!-- jsPDFライブラリをCDNから読み込み -->
-    <script src="https://cdnjs.cloudflare.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- ✅ 正しい jsPDF CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
     <style>
-        body { font-family: sans-serif; text-align: center; padding: 50px; background: #f4f4f9; }
-        .container { background: white; padding: 30px; border-radius: 10px; display: inline-block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        h1 { font-size: 1.2rem; color: #333; }
-        .info { margin-bottom: 20px; font-size: 0.9rem; color: #666; }
-        input { margin: 20px 0; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: #f4f4f9;
+            color: #333;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            display: inline-block;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 90%;
+        }
+        h1 { font-size: 1.4rem; margin-bottom: 10px; }
+        .info {
+            margin-bottom: 30px;
+            font-size: 0.9rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        input[type="file"] {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px dashed #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
         button:hover { background: #0056b3; }
     </style>
 </head>
@@ -19,55 +56,63 @@
 
 <div class="container">
     <h1>画像を名刺サイズ(91x55mm)でPDF化</h1>
-    <p class="info">画像をアップロードして「PDFをダウンロード」を押してください。</p>
-    
-    <input type="file" id="imageInput" accept="image/*"><br>
+    <p class="info">
+        JPGまたはPNGをアップロードしてください。<br>
+        A4用紙の中央に、名刺サイズで配置して保存します。
+    </p>
+
+    <input type="file" id="imageInput" accept="image/jpeg, image/png"><br>
     <button onclick="generatePDF()">PDFをダウンロード</button>
 </div>
 
 <script>
-    async function generatePDF() {
-        const input = document.getElementById('imageInput');
-        if (!input.files || !input.files[0]) {
-            alert("画像を選択してください。");
-            return;
-        }
+async function generatePDF() {
+    const input = document.getElementById('imageInput');
 
+    if (!input.files || !input.files[0]) {
+        alert("画像ファイルを選択してください。");
+        return;
+    }
+
+    try {
         const file = input.files[0];
         const imageData = await readFileAsDataURL(file);
 
-        // jsPDFの初期化 (p: 縦, mm: 単位, a4: 用紙サイズ)
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('p', 'mm', 'a4');
+        const doc = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+        });
 
-        // A4サイズ (210mm x 297mm)
         const pageWidth = 210;
         const pageHeight = 297;
 
-        // 固定したいサイズ (9.1cm x 5.5cm = 91mm x 55mm)
-        const imgWidth = 91;
-        const imgHeight = 55;
+        const imgWidth = 91;   // 名刺幅(mm)
+        const imgHeight = 55;  // 名刺高さ(mm)
 
-        // 中央に配置するための座標計算
         const x = (pageWidth - imgWidth) / 2;
         const y = (pageHeight - imgHeight) / 2;
 
-        // 画像を追加 (画像データ, 形式, x, y, 幅, 高さ)
-        doc.addImage(imageData, 'JPEG', x, y, imgWidth, imgHeight);
+        // 形式自動判別（JPEG/PNG）
+        doc.addImage(imageData, undefined, x, y, imgWidth, imgHeight);
 
-        // 保存
-        doc.save("fixed_size_image.pdf");
-    }
+        doc.save("meishi_size_image.pdf");
 
-    // ファイルをDataURLとして読み込む補助関数
-    function readFileAsDataURL(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-        });
+    } catch (error) {
+        console.error(error);
+        alert("エラーが発生しました。コンソールを確認してください。");
     }
+}
+
+function readFileAsDataURL(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
 </script>
 
 </body>
