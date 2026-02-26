@@ -97,7 +97,7 @@ async function generatePDF() {
         // 形式自動判別（JPEG/PNG）
         doc.addImage(imageData, undefined, x, y, imgWidth, imgHeight);
 
-        doc.save("meishi_size_image.pdf");
+        doc.save("MeishiSizeImage.pdf");
 
     } catch (error) {
         console.error(error);
