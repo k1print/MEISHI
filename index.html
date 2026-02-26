@@ -1,69 +1,147 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>画像サイズ固定 PDF変換ツール</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>画像サイズ固定 PDF変換ツール | デザイン名刺.net</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- ✅ 正しい jsPDF CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- jsPDF CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <style>
-        body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: #f4f4f9;
-            color: #333;
-        }
-        .container {
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            display: inline-block;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 90%;
-        }
-        h1 { font-size: 1.4rem; margin-bottom: 10px; }
-        .info {
-            margin-bottom: 30px;
-            font-size: 0.9rem;
-            color: #666;
-            line-height: 1.6;
-        }
-        input[type="file"] {
-            margin: 20px 0;
-            padding: 10px;
-            border: 1px dashed #ccc;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            transition: background 0.2s;
-        }
-        button:hover { background: #0056b3; }
-    </style>
+<style>
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    background: #eef1f5;
+    color: #333;
+}
+
+.header {
+    background: #ffffff;
+    padding: 18px 0;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+}
+
+.container {
+    max-width: 680px;
+    margin: 60px auto;
+    background: #ffffff;
+    padding: 45px;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+    text-align: center;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+.info {
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    color: #555;
+    line-height: 1.6;
+}
+
+.spec {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 25px;
+}
+
+input[type="file"] {
+    margin: 20px 0;
+    padding: 12px;
+    border: 1px dashed #ccc;
+    width: 100%;
+    box-sizing: border-box;
+    border-radius: 6px;
+}
+
+button {
+    background: #005bac;
+    color: white;
+    border: none;
+    padding: 14px 34px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background: #003f7d;
+}
+
+.notice {
+    margin-top: 25px;
+    font-size: 0.8rem;
+    color: #888;
+    line-height: 1.6;
+}
+
+footer {
+    margin-top: 60px;
+    padding: 25px 10px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    font-size: 0.8rem;
+    color: #777;
+    background: #fafafa;
+}
+
+footer a {
+    color: #005bac;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+</style>
 </head>
+
 <body>
 
+<div class="header">
+    デザイン名刺.net produced by ケイワンプリント
+</div>
+
 <div class="container">
-    <h1>画像を名刺サイズ(91x55mm)でPDF化</h1>
+    <h1>画像を名刺サイズ（91×55mm）でPDF化</h1>
+
     <p class="info">
-        JPGまたはPNGをアップロードしてください。<br>
-        A4用紙の中央に、名刺サイズで配置して保存します。
+        JPGまたはPNG画像をアップロードしてください。<br>
+        A4用紙中央に名刺サイズで配置したPDFを生成します。
     </p>
 
-    <input type="file" id="imageInput" accept="image/jpeg, image/png"><br>
+    <div class="spec">
+        対応形式：JPEG / PNG<br>
+        出力形式：A4サイズPDF（縦）
+    </div>
+
+    <input type="file" id="imageInput" accept="image/jpeg, image/png">
     <button onclick="generatePDF()">PDFをダウンロード</button>
+
+    <div class="notice">
+        ※本ツールはブラウザ内で処理されます。画像データは外部送信されません。<br>
+        ※仕上がりサイズは91×55mm固定です。
+    </div>
 </div>
+
+<footer>
+    <p>
+        御注文はこちら：
+        <a href="https://www.designmeishi.net/" target="_blank">
+            https://www.designmeishi.net/
+        </a>
+    </p>
+    <p>© 2026 デザイン名刺.net</p>
+</footer>
 
 <script>
 async function generatePDF() {
@@ -88,15 +166,13 @@ async function generatePDF() {
         const pageWidth = 210;
         const pageHeight = 297;
 
-        const imgWidth = 91;   // 名刺幅(mm)
-        const imgHeight = 55;  // 名刺高さ(mm)
+        const imgWidth = 91;
+        const imgHeight = 55;
 
         const x = (pageWidth - imgWidth) / 2;
         const y = (pageHeight - imgHeight) / 2;
 
-        // 形式自動判別（JPEG/PNG）
         doc.addImage(imageData, undefined, x, y, imgWidth, imgHeight);
-
         doc.save("MeishiSizeImage.pdf");
 
     } catch (error) {
